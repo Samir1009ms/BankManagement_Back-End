@@ -1,24 +1,24 @@
 const Post = require('../models/post');
 
-const getPosts =async (req, res) => {
-    try {
-        // datalarin get sorgununda gelmesi ucun find axtarir (request body dn gelen sorgunu)
-        const posts = await Post.find(req.body);
-        // const post = await Post.find().lean(); // lean() ile lean object elde edirik
-        const products = await Post.find(req.body)
-        // const product = products.map(product=>product.products)
-        res.send(products)
-        // res.json({  product })
-        // res.status(200).json({
-        //
-        //     // posts
-        //     products
-        //     // post
-        // })
-    } catch (error) {
-        res.status(500).json({ message: error.message })
+    const getPosts =async (req, res) => {
+        try {
+            // datalarin get sorgununda gelmesi ucun find axtarir (request body dn gelen sorgunu)
+            const posts = await Post.find(req.body);
+            // const post = await Post.find().lean(); // lean() ile lean object elde edirik
+            const products = await Post.find(req.body)
+            // const product = products.map(product=>product.products)
+            res.send(products)
+            // res.json({  product })
+            // res.status(200).json({
+            //
+            //     // posts
+            //     products
+            //     // post
+            // })
+        } catch (error) {
+            res.status(505).json({ message: error.message })
+        }
     }
-}
 
 const createPosts = async (req, res) => {
     try {
