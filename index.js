@@ -35,7 +35,7 @@ app.use('/api', Post);
 app.use('/api', Cart);
 
 
-app.get('/', (req, res) => {
+app.get('/api', (req, res) => {
     res.json({ message: 'Welcome to my application.' })
 });
 
