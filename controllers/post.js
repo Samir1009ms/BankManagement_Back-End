@@ -1,6 +1,6 @@
 const Post = require('../models/post');
 
-    const getPosts =async (req, res) => {
+const getPosts =async (req, res) => {
         try {
             // datalarin get sorgununda gelmesi ucun find axtarir (request body dn gelen sorgunu)
             const posts = await Post.find(req.body);
@@ -16,9 +16,9 @@ const Post = require('../models/post');
             //     // post
             // })
         } catch (error) {
-            res.status(505).json({ message: error.message })
+            res.status(500).json({ message: error.message })
         }
-    }
+}
 
 const createPosts = async (req, res) => {
     try {

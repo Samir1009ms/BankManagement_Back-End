@@ -71,6 +71,10 @@ app.get('/api', (req, res) => {
     res.json({ message: 'Welcome to my application.' })
 });
 
+app.get('/api/g',(req,res)=>{
+    res.json({ message: 'Welcome to my application.' })
+})
+
 // Portumuz
 const PORT = process.env.PORT || 5501;
 
