@@ -4,11 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "dev": "NODE_ENV=development node index.js",
     "start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Samir Yusifov",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
