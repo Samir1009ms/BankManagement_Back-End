@@ -7,28 +7,36 @@ const auth = (req,res,next)=>{
     try{
 
         // headers token atmaq ucun
-        const token = request.headers.authorization.split(".")[1];
+        const token = request.headers.authorization.split(" ")[1];
 
         // tokenin decode olunmasi
         let decodedData;
 
         // tokenin decode olunmasi
-        if(token){
+        // if(token){
 
-            // tokenin decode olunmasi
-            decodedData = jwt.verify(token,process.env.JWT_SECRET);
+        //     // tokenin decode olunmasi
+        //     decodedData = jwt.verify(token,process.env.JWT_SECRET);
 
-            // istifadecinin id si
-            req.userID=decodedData?.id;
+        //     // istifadecinin id si
+        //     req.userID=decodedData?.id;
 
-        }else{
+        // }else{
 
-            // tokenin yoxdursa decode olunmasi
+        //     // tokenin yoxdursa decode olunmasi
+        //     decodedData = jwt.decode(token);
+
+        //     // istifadecinin id si
+        //     req.userID=decodedData?.sub;
+        // }
+
+        if (token) {
+            decodedData = jwt.verify(token, process.env.JWT_SECRET);
+            req.user = { id: decodedData.id, isAdmin: decodedData.isAdmin };
+          } else {
             decodedData = jwt.decode(token);
-
-            // istifadecinin id si
-            req.userID=decodedData?.sub;
-        }
+            req.user = { id: decodedData.sub, isAdmin: decodedData.isAdmin };
+          }
 
         // istifadecinin id si
         next();

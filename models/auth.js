@@ -7,7 +7,11 @@ const AuthSchema = new mongoose.Schema({
     email:{ type:String, required:true, unique:true},
     password:{ type:String, required:true, trim:true},
     isAdmin:{ type:Boolean, required:true,  trim:true},
-    cart:{type:Array,default:[]}
+    cart:[],
+
+},{timestamps:true
+
+
 
 })
 

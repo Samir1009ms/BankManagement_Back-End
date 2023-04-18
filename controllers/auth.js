@@ -76,18 +76,18 @@ const login = async (req, res) => {
 
         // ! token yaratir
         const userToken = await jwt.sign(
-            {id: user._id ,isAdmin:user.isAdmin}, process.env.JWT_SECRET, 
+            {_id: user._id ,isAdmin:user.isAdmin}, process.env.JWT_SECRET,
             {expiresIn: '1h'}  )
 
-            res.send(userToken)
+            res.send(userToken,user,user._id)
 
 
         // ! tokeni ve useri qaytarir
-        res.status(200).json({
-            status:"ok",
-            user,
-            userToken
-        })
+        // res.status(200).json({
+        //     status:"ok",
+        //     user,
+        //     userToken
+        // })
 
     }catch (error) {
         res.status(500).json({ message: error.message })

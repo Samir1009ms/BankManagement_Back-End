@@ -1,13 +1,19 @@
-const  mongoose =  require ( 'mongoose' ) ;
+const mongoose = require('mongoose');
+const Post = require('./post');
 
-const cartSchema =  new  mongoose.Schema ( {
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' } ,
-    products: [ { type: mongoose.Schema.Types.ObjectId, ref: 'Product' } ] ,
-    total: { type: Number, default: 0 } ,
-    status: { type: String, default: 'pending' } ,
-    date: { type: Date, default: Date.now }
-} ) ;
+const cartSchema = new mongoose.Schema({
+    user: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Auth',
+        required: true
+    },
+    products: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Post",
+        required: true
+    }],
+}, { timestamps: true });
 
-const Cart = mongoose.model ( 'Cart' , cartSchema ) ;
+const Cart = mongoose.model('Cart', cartSchema);
 
 module.exports = Cart;
