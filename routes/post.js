@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.get('/getPosts',getPosts);
 router.get('/getDetail/:id',getDetail);
-router.patch('/getUptade/:id',getUptade);
+router.put('/getUptade/:id',getUptade);
 router.delete('/deletePost/:id',auth,deletePost);
 router.post('/createPosts',createPosts);
 router.get('/search',searchPost);
