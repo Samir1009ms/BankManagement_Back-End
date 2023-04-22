@@ -7,6 +7,7 @@ const dotenv = require('dotenv');
 const Auth = require('./routes/auth.js');
 const Post = require('./routes/post.js');
 const Cart = require('./routes/cart.js');
+const ProFile = require('./routes/profile.js');
 const {request} = require("express");
 const bodyParser = require("body-parser");
 
@@ -38,6 +39,7 @@ app.use('/api', Post);
 
 // * get post patch delete
 app.use('/api', Cart);
+app.use('/api', ProFile);
 
 
 app.get('/api', (req, res) => {

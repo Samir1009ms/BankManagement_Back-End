@@ -8,6 +8,8 @@ const AuthSchema = new mongoose.Schema({
     password:{ type:String, required:true, trim:true},
     isAdmin:{ type:Boolean, default: false,  trim:true},
     cart:[],
+    profile:[]
+
 
 },{timestamps:true
 })
