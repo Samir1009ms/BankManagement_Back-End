@@ -8,6 +8,7 @@ const Auth = require('./routes/auth.js');
 const Post = require('./routes/post.js');
 const Cart = require('./routes/cart.js');
 const BankCard = require('./routes/bankcards.js');
+const Transfer = require('./routes/transfer.js');
 const ProFile = require('./routes/profile.js');
 const {request} = require("express");
 const bodyParser = require("body-parser");
@@ -42,15 +43,12 @@ app.use('/api', Post);
 app.use('/api', Cart);
 app.use('/api', ProFile);
 app.use('/api',BankCard)
+app.use('/api',Transfer)
 
 
 app.get('/api', (req, res) => {
     res.json({ message: 'Welcome to my application.' })
 });
-
-app.get('/api/g',(req,res)=>{
-    res.json({ message: 'Welcome to my application.' })
-})
 
 // Portumuz
 const PORT = process.env.PORT || 5501;
