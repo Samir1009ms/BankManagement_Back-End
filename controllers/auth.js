@@ -77,12 +77,12 @@ const login = async (req, res) => {
     }
     // ! token yaratir
     const userToken = await jwt.sign(
-      { _id: user._id, isAdmin: user.isAdmin },
+      { _id: user._id, isAdmin: user.isAdmin, name: user.name ,email: user.email},
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
-    res.send(userToken, user, user._id);
+    res.send(userToken, user, user._id, user.isAdmin, user.username, user.email);
 
     // ! tokeni ve useri qaytarir
     res.status(200).json({});
@@ -96,9 +96,17 @@ const user = async (req, res) => {
   res.send(user);
 };
 
+const token = async (req, res) => {
+    const token = req.headers.authorization.split(" ")[1];
+    const decodedData = jwt.decode(token);
+    res.send(decodedData);
+}
+
+
 // register login export elemek
 module.exports = {
   register,
   login,
   user,
+  token
 };

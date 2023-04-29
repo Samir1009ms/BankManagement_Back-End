@@ -13,6 +13,8 @@ const ProFile = require('./routes/profile.js');
 const {request} = require("express");
 const bodyParser = require("body-parser");
 
+const auth = require('./middleware/auth.js');
+
 
 
 dotenv.config();

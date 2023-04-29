@@ -5,8 +5,16 @@ const { request } = require("express");
 const auth = (req, res, next) => {
   try {
     // headers token atmaq ucun
-    const token = request.headers.authorization.split(" ")[1];
+    // const token = request.headers.authorization.split(".")[1];
     // tokenin decode olunmasi
+
+    const token = req.headers.authorization.split(" ")[1];
+    console.log(token)
+    // const token = req.headers["authorization"]
+    //     ? req.headers["authorization"].split(" ")[1]
+    //     : null;
+    //
+
     let decodedData;
     // tokenin decode olunmasi
     // if(token){
@@ -25,9 +33,11 @@ const auth = (req, res, next) => {
     if (token) {
       decodedData = jwt.verify(token, process.env.JWT_SECRET);
       req.user = { id: decodedData.id, isAdmin: decodedData.isAdmin };
+      console.log("s")
     } else {
-      decodedData = jwt.decode(token);
-      req.user = { id: decodedData.sub, isAdmin: decodedData.isAdmin };
+      // decodedData = jwt.decode(token);
+      // req.user = { id: decodedData.sub, isAdmin: decodedData.isAdmin };
+        console.log("ss")
     }
 
     // istifadecinin id si
