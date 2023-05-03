@@ -50,6 +50,11 @@ app.use('/api',Transfer)
 
 app.get('/api', (req, res) => {
     res.json({ message: 'Welcome to my application.' })
+    var userAgent = req.headers['user-agent'];
+    console.log(userAgent);
+    const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+    console.log('IP address:', ip);
+    console.log("s")
 });
 
 // Portumuz
