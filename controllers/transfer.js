@@ -88,7 +88,7 @@ const getTransactions = async (req, res) => {
         res.send(transactions);
         // const transaction = await Transaction.find(req.body);
         console.log(transactions);
-        res.status(200).json({ message: "Transactions found", transactions: transactions });
+            res.status(200).json({ message: "Transactions found", transactions: transactions });
     }
     catch (error) {
         res.status(500).json({ message: error.message });

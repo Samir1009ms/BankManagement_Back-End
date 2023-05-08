@@ -82,7 +82,10 @@ const login = async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    res.send(userToken, user, user._id, user.isAdmin, user.username, user.email);
+    let token = jwt.sign({ _id: user._id, isAdmin: user.isAdmin, name: user.name ,email: user.email}, process.env.JWT_SECRET, { expiresIn: "1h" })
+
+    // res.send(userToken, user, user._id, user.isAdmin, user.username, user.email);
+    res.send(token);
 
     // ! tokeni ve useri qaytarir
     res.status(200).json({});
