@@ -29,13 +29,13 @@ const io = socketIO(server, {
 
 const sendNotification = (amount, senderCardNumber, receiverCardNumber,userId) => {
     const notificationMessage = `Hesabınıza ${amount} miqdarda pul koxdu. Alıcı kart numarası: ${receiverCardNumber}.`;
-    io.emit('notification', notificationMessage); // Tüm soketlere bildirimi gönder
-
     const notification = new Notification({
         message: notificationMessage,
         isRead: false,
         sender: userId
     });
+
+    io.emit('notification', notificationMessage); // Tüm soketlere bildirimi gönder
 
     try {
         const savedNotification =  notification.save();
