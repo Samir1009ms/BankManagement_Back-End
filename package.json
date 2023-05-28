@@ -29,6 +29,7 @@
     "node_env": "^0.0.3",
     "nodemon": "^2.0.22",
     "path": "^0.12.7",
+    "socket.io": "^4.6.1",
     "vercel": "^28.18.5"
   },
   "devDependencies": {

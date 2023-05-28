@@ -1,9 +1,51 @@
 const mongoose = require("mongoose");
 const Transaction = require("../models/transfer");
 const BankCard = require("../models/bankcards");
-
+const  Notification = require("../models/notifications");
 const moment = require("moment");
+const http = require('http');
+const express = require('express');
+const socketIO = require('socket.io');
+const cors = require("cors");
 
+const app = express();
+app.use(cors());
+
+const server = http.createServer(app);
+const io = socketIO(server, {
+    cors: {
+        origin: '*' // İstekleri herhangi bir kök URL'den kabul et
+    }
+});
+
+// Bildirim gönderme işlemi
+// const sendNotification = (amount, senderCardNumber, receiverCardNumber) => {
+//     const message = `Yeni bir para transferi gerçekleşti!\nMiktar: ${amount}\nGönderen Kart: ${senderCardNumber}\nAlıcı Kart: ${receiverCardNumber}`;
+//     io.emit('notification', message); // Tüm soketlere bildirimi gönder
+//
+//
+//     console.log(message)
+// };
+
+const sendNotification = (amount, senderCardNumber, receiverCardNumber,userId) => {
+    const notificationMessage = `Hesabınıza ${amount} miqdarda pul koxdu. Alıcı kart numarası: ${receiverCardNumber}.`;
+    io.emit('notification', notificationMessage); // Tüm soketlere bildirimi gönder
+
+    const notification = new Notification({
+        message: notificationMessage,
+        isRead: false,
+        sender: userId
+    });
+
+    try {
+        const savedNotification =  notification.save();
+        console.log("Bildirim başarıyla kaydedildi:", savedNotification);
+    } catch (error) {
+        console.error("Bildirim kaydedilirken bir hata oluştu:", error);
+    }
+};
+
+// Soket bağlantısı
 
 const transferMoney = async (req, res) => {
     try {
@@ -56,9 +98,14 @@ const transferMoney = async (req, res) => {
                     date: currentDate,
                     cardNumber: senderCardNumber,
                     userId: senderCard.user.toString()
+
                 })
+                sendNotification(amount, senderCardNumber, receiverCardNumber, senderCard.user.toString());
+
                 await incomne.save();
+                // Para transferi gerçekleştiğinde bildirim gönderme
             }
+
             console.log("ssss")
         }
         await receiverCard.save();
@@ -85,10 +132,25 @@ const getTransactions = async (req, res) => {
         if (!transactions) {
             return res.status(404).json({ message: "Transactions tapılmadı" });
         }
+        // io.emit('transactions', transactions);
+
+        io.on("connection", (socket) => {
+            console.log("User connected: ", socket.id);
+
+            socket.join(userId);
+
+            socket.on("disconnect", () => {
+                console.log("User disconnected: ", socket.id);
+            });
+        });
+        io.to(userId).emit("transactions", transactions);
+
         res.send(transactions);
         // const transaction = await Transaction.find(req.body);
         console.log(transactions);
-            res.status(200).json({ message: "Transactions found", transactions: transactions });
+
+
+        res.status(200).json({ message: "Transactions found", transactions: transactions });
     }
     catch (error) {
         res.status(500).json({ message: error.message });
@@ -102,5 +164,37 @@ const getTransactions = async (req, res) => {
 //
 // }
 
+const getUserNotifications = async (req, res) => {
+    try {
+        const {userId} = req.params; // Kullanıcının kimliğini alın (örneğin, oturum açmış bir kullanıcı olarak varsayıyoruz)
 
-module.exports = {  transferMoney, getTransactions }
+        const notifications = await Notification.find({ sender: userId });
+        if (!notifications) {
+            return res.status(404).json({ message: "Bildirimler tapılmadı" });
+        }
+
+        res.send(notifications);
+        res.status(200).json({ notifications:"ss" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+io.on('connection', (socket) => {
+    // console.log('Yeni bir istemci bağlandı.');
+    console.log("User connected: ", socket.id);
+    // socket.join(userId);
+
+    // Soket bağlantısı kapatıldığında
+    socket.on('disconnect', () => {
+        console.log('Bir istemci ayrıldı.');
+    });
+
+    // Bildirim gönderme işlemi
+
+});
+server.listen(3003, () => {
+    console.log('Sunucu çalışıyor. Port: 3000');
+});
+
+module.exports = {  transferMoney, getTransactions, getUserNotifications }
