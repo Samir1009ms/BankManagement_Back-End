@@ -35,7 +35,7 @@ const sendNotification = (amount, senderCardNumber, receiverCardNumber,userId) =
         sender: userId
     });
 
-    io.emit('notification', notificationMessage); // Tüm soketlere bildirimi gönder
+    io.emit('notification', notification); // Tüm soketlere bildirimi gönder
 
     try {
         const savedNotification =  notification.save();
