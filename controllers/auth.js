@@ -73,22 +73,26 @@ const login = async (req, res) => {
     const passwords = await bcrypt.compare(password, user.password);
     // ! password yoxdursa error qaytarir
     if (!passwords) {
-      return res.status(500).json({ message: "Password is incorrect" });
+      return res.status(500).send({ parol: "Password is incorrect" });
     }
     // ! token yaratir
-    const userToken = await jwt.sign(
-      { _id: user._id, isAdmin: user.isAdmin, name: user.name ,email: user.email},
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
-
+    // const userToken = await jwt.sign(
+    //   { _id: user._id, isAdmin: user.isAdmin, name: user.name ,email: user.email},
+    //   process.env.JWT_SECRET,
+    //   { expiresIn: "1h" }
+    // );
+    if(req.body.nPassword){
+     const haspasword= await bcrypt.hash(req.body.nPassword, 12);
+        user.password=haspasword;
+        await user.save();
+        res.status(200).send({password:"parol"});
+    }
     let token = jwt.sign({ _id: user._id, isAdmin: user.isAdmin, name: user.name ,email: user.email}, process.env.JWT_SECRET, { expiresIn: "1h" })
-
     // res.send(userToken, user, user._id, user.isAdmin, user.username, user.email);
-    res.send(token);
-
+    // res.send(token);
+      res.status(200).send(token);
     // ! tokeni ve useri qaytarir
-    res.status(200).json({});
+    // res.status(200).json({});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

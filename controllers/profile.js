@@ -9,6 +9,7 @@ const getProfile = async (req, res) => {
     }
 
     res.send(profile);
+    res.status(200).send(profile);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -17,22 +18,24 @@ const getProfile = async (req, res) => {
 const addProfile = async (req, res) => {
   try {
     const userId = req.params.userId;
-    const { fullName, street, city, state, country } = req.body;
+    const { userName, city, adress, province, email, date, phone } = req.body.value;
     const profile = await Profile.findOne({ user: userId });
     if (profile) {
       return res.status(404).json({ message: "Profile already exist" });
     }
     const newProfile = new Profile({
       user: userId,
-      fullName,
-      street,
+      userName,
       city,
-      state,
-      country,
+      province,
+      adress,
+      email,
+      date,
+      phone,
     });
     await newProfile.save();
     res.send(newProfile);
-    res.stasus(200).json({ message: "Profile added" });
+    res.stasus(200).send({ message: "Profile created", newProfile});
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -41,7 +44,7 @@ const addProfile = async (req, res) => {
 const updateProfile = async (req, res) => {
   try {
     const { userId } = req.params;
-    const { fullName, street, city, state, country } = req.body;
+    const { userName, city, adress, province, email, date, phone } = req.body;
 
     const profile = await Profile.findOne({ user: userId });
 
@@ -50,17 +53,15 @@ const updateProfile = async (req, res) => {
     }
 
     const updatedProfile = await Profile.findOneAndUpdate(
-        { user: userId },
-        { fullName, street, city, state, country },
-        { new: true }
+      { user: userId },
+      { userName, city, adress, province, email, date, phone },
+      { new: true }
     );
 
-    console.log(updatedProfile);
     res.status(200).json({ message: "Profile updated", updatedProfile });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 module.exports = { getProfile, addProfile, updateProfile };

@@ -9,6 +9,14 @@ const notificationSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  amount: {
+    type: Number,
+    required: true,
+  },
+  card: {
+    type:String||Number,
+    required: true,
+  },
   isRead: {
     type: Boolean,
     default: false,

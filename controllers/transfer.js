@@ -18,21 +18,15 @@ const io = socketIO(server, {
     }
 });
 
-// Bildirim gönderme işlemi
-// const sendNotification = (amount, senderCardNumber, receiverCardNumber) => {
-//     const message = `Yeni bir para transferi gerçekleşti!\nMiktar: ${amount}\nGönderen Kart: ${senderCardNumber}\nAlıcı Kart: ${receiverCardNumber}`;
-//     io.emit('notification', message); // Tüm soketlere bildirimi gönder
-//
-//
-//     console.log(message)
-// };
 
 const sendNotification = (amount, senderCardNumber, receiverCardNumber,userId) => {
-    const notificationMessage = `Hesabınıza ${amount} miqdarda pul koxdu. Alıcı kart numarası: ${receiverCardNumber}.`;
+    const notificationMessage = `Hesabınıza ${amount} azn pul köçdü. kart nömrəsi: ${receiverCardNumber}.`;
     const notification = new Notification({
         message: notificationMessage,
         isRead: false,
-        sender: userId
+        amount: amount,
+        sender: userId,
+        card:receiverCardNumber
     });
 
     io.emit('notification', notification); // Tüm soketlere bildirimi gönder
@@ -45,21 +39,27 @@ const sendNotification = (amount, senderCardNumber, receiverCardNumber,userId) =
     }
 };
 
+const deleteNotifications =()=>{
+    const deleteNotification = `Bildiriş silindi`
+    io.emit('deleteNotification', deleteNotification)
+}
+
 // Soket bağlantısı
 
 const transferMoney = async (req, res) => {
     try {
         const { senderCardNumber, receiverCardNumber, amount } = req.body;
-        console.log(senderCardNumber, receiverCardNumber, amount)
+        // console.log(req.body)
+        // console.log(senderCardNumber, receiverCardNumber, amount)
         const senderCard = await BankCard.findOne({ "cards.cardNumber": senderCardNumber });
         const receiverCard = await BankCard.findOne({ "cards.cardNumber": receiverCardNumber });
-        console.log(senderCard)
+        // console.log(senderCard)
         if (!senderCard || !receiverCard) {
             return res.status(404).json({ message: "kart tapılmadı" });
         }
 
         for (let card of senderCard.cards) {
-            console.log(card.cardNumber, senderCardNumber);
+            // console.log(card.cardNumber, senderCardNumber);
             if (card.cardNumber === senderCardNumber) {
                 if (card.balance <= amount) {
                     return res.status(404).json({ message: "balansda kifayət qədər pul yoxdur" });
@@ -77,11 +77,11 @@ const transferMoney = async (req, res) => {
                         userId: receiverCard.user.toString()
                     })
                     await outcomne.save();
-                    console.log("s")
+                    // console.log("s")
                     break;
                 }
             } else {
-                console.log("ss")
+                // console.log("ss")
             }
         }
         await senderCard.save();
@@ -100,15 +100,15 @@ const transferMoney = async (req, res) => {
                     userId: senderCard.user.toString()
 
                 })
-                sendNotification(amount, senderCardNumber, receiverCardNumber, senderCard.user.toString());
 
                 await incomne.save();
                 // Para transferi gerçekleştiğinde bildirim gönderme
             }
 
-            console.log("ssss")
+            // console.log("ssss")
         }
         await receiverCard.save();
+        sendNotification(amount, senderCardNumber, receiverCardNumber, senderCard.user.toString());
 
         // res.send(receiverCard)
         // res.send(senderCard)
@@ -133,21 +133,9 @@ const getTransactions = async (req, res) => {
             return res.status(404).json({ message: "Transactions tapılmadı" });
         }
         // io.emit('transactions', transactions);
-
-        io.on("connection", (socket) => {
-            console.log("User connected: ", socket.id);
-
-            socket.join(userId);
-
-            socket.on("disconnect", () => {
-                console.log("User disconnected: ", socket.id);
-            });
-        });
-        io.to(userId).emit("transactions", transactions);
-
         res.send(transactions);
         // const transaction = await Transaction.find(req.body);
-        console.log(transactions);
+        // console.log(transactions);
 
 
         res.status(200).json({ message: "Transactions found", transactions: transactions });
@@ -173,16 +161,37 @@ const getUserNotifications = async (req, res) => {
             return res.status(404).json({ message: "Bildirimler tapılmadı" });
         }
 
+
         res.send(notifications);
-        res.status(200).json({ notifications:"ss" });
+        res.status(200).send(JSON.stringify({ notifications:"ss" })
+        );
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).send(JSON.stringify({ message: error.message }));
     }
 };
 
+const deleteNotification = async (req, res) => {
+    try {
+        const { notificationId } = req.params;
+        // console.log(notificationId)
+
+        const notification = await Notification.findByIdAndRemove(notificationId);
+        if (!notification) {
+            return res.status(404).json({ message: "Bildiriş tapılmadı" });
+        }
+
+        // console.log(notification)
+        deleteNotifications()
+        res.status(200).json({ message: "Bildiriş  silindi" });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+
+}
+
 io.on('connection', (socket) => {
     // console.log('Yeni bir istemci bağlandı.');
-    console.log("User connected: ", socket.id);
+    // console.log("User connected: ", socket.id);
     // socket.join(userId);
 
     // Soket bağlantısı kapatıldığında
@@ -193,8 +202,10 @@ io.on('connection', (socket) => {
     // Bildirim gönderme işlemi
 
 });
+
+
 server.listen(3003, () => {
     console.log('Sunucu çalışıyor. Port: 3000');
 });
 
-module.exports = {  transferMoney, getTransactions, getUserNotifications }
+module.exports = {  transferMoney, getTransactions, getUserNotifications,deleteNotification }
