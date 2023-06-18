@@ -44,7 +44,7 @@ const addProfile = async (req, res) => {
 const updateProfile = async (req, res) => {
   try {
     const { userId } = req.params;
-    const { userName, city, adress, province, email, date, phone } = req.body;
+    const { userName, city, adress, province, email, date, phone } = req.body.value;
 
     const profile = await Profile.findOne({ user: userId });
 

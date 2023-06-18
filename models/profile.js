@@ -9,7 +9,7 @@ const profileSchema = new mongoose.Schema(
     adress: { type: String, trim: true },
     country: { type: String, trim: true },
     email: { type: String, trim: true },
-    date: { type: String, trim: true },
+    date: { type: Date, trim: true },
     phone: { type: String, trim: true },
   },
   { timestamps: true }

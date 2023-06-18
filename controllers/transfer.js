@@ -28,7 +28,6 @@ const sendNotification = (amount, senderCardNumber, receiverCardNumber,userId) =
         sender: userId,
         card:receiverCardNumber
     });
-
     io.emit('notification', notification); // Tüm soketlere bildirimi gönder
 
     try {
@@ -57,7 +56,9 @@ const transferMoney = async (req, res) => {
         if (!senderCard || !receiverCard) {
             return res.status(404).json({ message: "kart tapılmadı" });
         }
-
+        // const userLocation = req.headers["x-forwarded-for"] || req.connection.remoteAddress;
+        // const userLocation = await getLocationFromExternalAPI();
+        // console.log("userLocation", userLocation);
         for (let card of senderCard.cards) {
             // console.log(card.cardNumber, senderCardNumber);
             if (card.cardNumber === senderCardNumber) {
@@ -74,7 +75,7 @@ const transferMoney = async (req, res) => {
                         amount: -amount,
                         date: currentDate,
                         cardNumber: receiverCardNumber,
-                        userId: receiverCard.user.toString()
+                        userId: senderCard.user.toString()
                     })
                     await outcomne.save();
                     // console.log("s")
@@ -97,7 +98,7 @@ const transferMoney = async (req, res) => {
                     amount: amount,
                     date: currentDate,
                     cardNumber: senderCardNumber,
-                    userId: senderCard.user.toString()
+                    userId: receiverCard.user.toString()
 
                 })
 
@@ -108,7 +109,7 @@ const transferMoney = async (req, res) => {
             // console.log("ssss")
         }
         await receiverCard.save();
-        sendNotification(amount, senderCardNumber, receiverCardNumber, senderCard.user.toString());
+        sendNotification(amount, senderCardNumber, receiverCardNumber, receiverCard.user.toString());
 
         // res.send(receiverCard)
         // res.send(senderCard)
