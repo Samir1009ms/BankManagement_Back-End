@@ -59,6 +59,10 @@ const addBankCard = async (req, res) => {
   const userId = req.params.userId;
   const { cardNumber, cardName, cardDate, cardCvv, cardType } = req.body;
   let bankCard = await BankCard.findOne({ user: userId });
+    let cards = await  bankCard.findOne({"cards.cardNumber" : cardNumber})
+    if(cards){
+        return res.status(400).json({ message: "daxil etdiyniz kart basqa istifadeciye aitdir" });
+    }
   if (!bankCard) {
     // bankCard = new BankCard({ user:userId, cards: [] })
     bankCard = new BankCard({
@@ -69,17 +73,36 @@ const addBankCard = async (req, res) => {
   } else {
     bankCard.cards.push({ cardNumber, cardName, cardDate, cardCvv, cardType });
   }
-
   await bankCard.save();
   res.send(bankCard);
 
   res.status(200).json({ message: "Bank card added" });
 };
 
+const cardDetails = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const card = await BankCard.findOne({"cards._id": id});
+        if (!card) {
+            return res.status(404).json({ message: "Card yoxdu" });
+        }
+
+        const foundCard = card.cards.find(c => c._id.equals(id))
+        if (!foundCard) {
+            return res.status(404).json({ message: "Card tapilmadi" });
+        }
+        res.status(200).send({ message: "Card found", card: foundCard });
+    } catch (error) {
+        res.status(500).send({ message: error.message });
+    }
+}
+
+
 
 const updateBankCard = async (req, res) => {
     try {
-        const { userId } = req.params;
+        const { userId } = req.params;ca
         const {cardId} = req.params;
         const { cardNumber, cardName, cardDate, cardCvv, cardType } = req.body;
 
@@ -100,4 +123,4 @@ const updateBankCard = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 }
-module.exports = { getBankCard, addBankCard, updateBankCard ,getCard};
+module.exports = { getBankCard, addBankCard, updateBankCard ,getCard,cardDetails};
