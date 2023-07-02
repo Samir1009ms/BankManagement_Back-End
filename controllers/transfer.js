@@ -134,6 +134,7 @@ const getTransactions = async (req, res) => {
             return res.status(404).json({ message: "Transactions tapılmadı" });
         }
         // io.emit('transactions', transactions);
+        // console.log(transactions)
         res.send(transactions);
         // const transaction = await Transaction.find(req.body);
         // console.log(transactions);
@@ -146,7 +147,25 @@ const getTransactions = async (req, res) => {
     }
 }
 
+const getTransactionsByCardNumber = async (req, res) => {
+    const {userId} = req.params;
+    console.log(userId)
+    try {
+        const transactionsD = await Transaction.find({ cardNumber: userId });
+        if (!transactionsD) {
+            return res.status(404).json({ message: "Transactions tapılmadı" });
+        }
+        console.log(transactionsD)
+        res.send(transactionsD);
 
+
+        res.status(200).json({ message: "Transactions found", transactions: transactionsD });
+    }
+    catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+
+}
 // const filterTransactions = async (req, res) => {
 //
 //
@@ -161,8 +180,6 @@ const getUserNotifications = async (req, res) => {
         if (!notifications) {
             return res.status(404).json({ message: "Bildirimler tapılmadı" });
         }
-
-
         res.send(notifications);
         res.status(200).send(JSON.stringify({ notifications:"ss" })
         );
@@ -209,4 +226,4 @@ server.listen(3000, () => {
     console.log('Sunucu çalışıyor. Port: 3000');
 });
 
-module.exports = {  transferMoney, getTransactions, getUserNotifications,deleteNotification }
+module.exports = {  transferMoney, getTransactions, getUserNotifications,deleteNotification,getTransactionsByCardNumber }

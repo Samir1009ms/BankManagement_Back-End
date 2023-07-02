@@ -102,7 +102,7 @@ const cardDetails = async (req, res) => {
 
 const updateBankCard = async (req, res) => {
     try {
-        const { userId } = req.params;ca
+        const { userId } = req.params;
         const {cardId} = req.params;
         const { cardNumber, cardName, cardDate, cardCvv, cardType } = req.body;
 
