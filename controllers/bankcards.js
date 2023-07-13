@@ -7,7 +7,20 @@ const getBankCard = async (req, res) => {
     const userId = req.params.userId;
     const bankCard = await BankCard.findOne({ user: userId });
     if (!bankCard) {
-      return res.status(404).json({ message: "Bank card not found" });
+        res.send({
+
+            cards:[{
+                cardNumber: "0000000000000000",
+                cardName: "Card not found",
+                cardDate: "00/00",
+                cardCvv: "000",
+                cardType: " Type",
+                balance: 0,
+                blocked: false
+            }]
+        });
+        return res.status(200).send([{cardNumber:"0000000000000000",cardName:"Card not found",cardDate:"00/00",cardCvv:"000",cardType:" Type",balance:0,blocked:false}]);
+
     }
 
     res.send(bankCard);

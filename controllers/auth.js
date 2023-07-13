@@ -81,16 +81,25 @@ const login = async (req, res) => {
     //   process.env.JWT_SECRET,
     //   { expiresIn: "1h" }
     // );
-    if(req.body.nPassword){
-     const haspasword= await bcrypt.hash(req.body.nPassword, 12);
-        user.password=haspasword;
-        await user.save();
-        res.status(200).send({password:"parol"});
+    if (req.body.nPassword) {
+      const haspasword = await bcrypt.hash(req.body.nPassword, 12);
+      user.password = haspasword;
+      await user.save();
+      res.status(200).send({ password: "parol" });
     }
-    let token = jwt.sign({ _id: user._id, isAdmin: user.isAdmin, name: user.name ,email: user.email}, process.env.JWT_SECRET, { expiresIn: "1h" })
+    let token = jwt.sign(
+      {
+        _id: user._id,
+        isAdmin: user.isAdmin,
+        name: user.name,
+        email: user.email,
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" }
+    );
     // res.send(userToken, user, user._id, user.isAdmin, user.username, user.email);
     // res.send(token);
-      res.status(200).send(token);
+    res.status(200).send(token);
     // ! tokeni ve useri qaytarir
     // res.status(200).json({});
   } catch (error) {
@@ -104,16 +113,15 @@ const user = async (req, res) => {
 };
 
 const token = async (req, res) => {
-    const token = req.headers.authorization.split(" ")[1];
-    const decodedData = jwt.decode(token);
-    res.send(decodedData);
-}
-
+  const token = req.headers.authorization.split(" ")[1];
+  const decodedData = jwt.decode(token);
+  res.send(decodedData);
+};
 
 // register login export elemek
 module.exports = {
   register,
   login,
   user,
-  token
+  token,
 };

@@ -123,9 +123,52 @@ const transferMoney = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+// const nodemailer = require('nodemailer');
+// function generateRandomCode() {
+//     const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+//     const codeLength = 6;
+//     let code = '';
+//
+//     for (let i = 0; i < codeLength; i++) {
+//         const randomIndex = Math.floor(Math.random() * characters.length);
+//         code += characters.charAt(randomIndex);
+//     }
+//
+//     return code;
+// }
+// let transporter = nodemailer.createTransport({
+//     host: 'smtp.gmail.com',
+//     port: 465,
+//     secure: true,
+//     auth: {
+//         user: 'yusifovs1009@gmail.com',
+//         pass: '10092020msMS'
+//     }
+// });
+
 const getTransactions = async (req, res) => {
     const {userId} = req.params;
     console.log(userId)
+
+    // const code = generateRandomCode();
+    //
+    // const mailOptions = {
+    //     from: 'yusifovs1009@gmail.com',
+    //     to: 'yusifov.dev@gmail.com',
+    //     subject: 'Giriş Kodu',
+    //     text: `Giriş yapmak için kullanmanız gereken kod: ${code}`
+    // };
+    //
+    // transporter.sendMail(mailOptions, function (error, info)  {
+    //     if (error) {
+    //         console.log(error);
+    //         res.status(500).send('Bir hata oluştu');
+    //     } else {
+    //         console.log('E-posta gönderildi: ' + info.response);
+    //         res.send('Giriş kodu e-posta adresinize gönderildi.');
+    //     }
+    // });
     try {
         // const transactions = await Transaction.find({ $or: [{ senderUserId: userId }, { receiverUserId: userId }] });
         // const transactions = await Transaction.find({ senderUserId: userId });
